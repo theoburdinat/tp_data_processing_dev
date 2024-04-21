@@ -10,7 +10,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Set up Docker Compose
-      run: docker-compose -f src/test/docker/docker-compose.yml up -d
+      run: docker-compose -f data-engineering/tp-functional-programming-scala/docker-compose.yml up -d
 
     - name: Wait for environment to be ready
       run: sleep 120
