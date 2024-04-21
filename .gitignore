@@ -1,0 +1,13 @@
+*.class
+*.log
+target/
+.idea
+.bsp
+project/target
+project/project
+.vscode/
+.metals/
+.cache
+**/.cache
+.DS_Store
+**/.DS_Store
