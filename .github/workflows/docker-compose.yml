@@ -3,6 +3,7 @@ name: Docker Compose CI
 on:
   pull_request:
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   build_and_test:
