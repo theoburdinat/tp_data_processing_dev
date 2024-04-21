@@ -17,7 +17,7 @@ jobs:
       run: sleep 60
 
     - name: Execute tests
-      run: docker-compose -f data-engineering/tp-functional-programming-scala/docker-compose.yml exec my-scala-app sbt test
+      run: docker-compose -f data-engineering/tp-functional-programming-scala/docker-compose.yml exec -T my-scala-app sbt test
 
     - name: Clean up
       run: docker-compose -f data-engineering/tp-functional-programming-scala/docker-compose.yml down
