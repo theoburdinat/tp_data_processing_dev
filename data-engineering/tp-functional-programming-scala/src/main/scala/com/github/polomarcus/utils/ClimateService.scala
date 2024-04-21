@@ -16,7 +16,10 @@ object ClimateService {
    * @param description "my awesome sentence contains a key word like climate change"
    * @return Boolean True
    */
-  def isClimateRelated(description: String): Boolean = ???
+  def isClimateRelated(description: String): Boolean = {
+    val keywords = List("global warming", "ipcc", "climate change")
+    keywords.exists(keyword => description.toLowerCase.contains(keyword))
+  }
 
   /**
    * parse a list of raw data and transport it with type into a list of CO2Record
@@ -25,9 +28,11 @@ object ClimateService {
    * otherwise : None
    * you can access to Tuple with myTuple._1, myTuple._2, myTuple._3
    */
-  def parseRawData(list: List[(Int, Int, Double)]) : List[Option[CO2Record]] = {
-    list.map { record => ??? }
-    ???
+  def parseRawData(list: List[(Int, Int, Double)]): List[Option[CO2Record]] = {
+    list.map { case (year, month, ppm) =>
+      val record = CO2Record(year, month, ppm)
+      if (record.isValidPpmValue) Some(record) else None
+    }
   }
 
   /**
@@ -36,15 +41,30 @@ object ClimateService {
    * @param list
    * @return a list
    */
-  def filterDecemberData(list: List[Option[CO2Record]]) : List[CO2Record] = ???
+  def filterDecemberData(list: List[Option[CO2Record]]): List[CO2Record] = {
+    list.flatten.filterNot(_.month == 12)
+  }
 
 
   /**
    * **Tips**: look at the read me to find some tips for this function
    */
-  def getMinMax(list: List[CO2Record]) : (Double, Double) = ???
+  def getMinMax(records: List[Option[CO2Record]]): Option[(Double, Double)] = {
+    val flattenedRecords = records.map(_.get)
+    if (flattenedRecords.isEmpty) None
+    else Some(flattenedRecords.map(_.ppm).min, flattenedRecords.map(_.ppm).max)
+  }
 
-  def getMinMaxByYear(list: List[CO2Record], year: Int) : (Double, Double) = ???
+
+  def getMinMaxByYear(records: List[Option[CO2Record]], year: Int): Option[(Double, Double)] = {
+    val validYearlyRecords = records.map(_.get).filter(_.year == year)
+    getMinMax(validYearlyRecords.map(Some(_)))
+  }
+
+  def calculateDifference(records: List[Option[CO2Record]]): Option[Double] = {
+    getMinMax(records).map { case (min, max) => BigDecimal(max - min).setScale(3, BigDecimal.RoundingMode.HALF_UP).toDouble }
+  }
+
 
   /**
    * use this function side src/main/scala/com/polomarcus/main/Main (with sbt run)
@@ -55,9 +75,29 @@ object ClimateService {
    * @param list
    */
   def showCO2Data(list: List[Option[CO2Record]]): Unit = {
-    logger.info("Call ClimateService.filterDecemberData here")
+    // First, count how many None values are present
+    val nonesCount = list.count(_.isEmpty)
 
-    logger.info("Call record.show function here inside a map function")
+    // Then, filter out None values and records from December
+    val validRecords = list.flatten.filterNot(_.month == 12)
+
+    // Logging each valid record using the show method of CO2Record
+    validRecords.foreach(record => logger.info(record.show()))
+
+    logger.info(s"Number of None values: $nonesCount")
+  }
+
+  def linearRegression(data: List[(Int, Double)]): (Double, Double) = {
+    val n = data.length
+    val sumX = data.map(_._1).sum
+    val sumY = data.map(_._2).sum
+    val sumX2 = data.map(x => x._1 * x._1).sum
+    val sumXY = data.map(x => x._1 * x._2).sum
+
+    val a = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX)
+    val b = (sumY - a * sumX) / n
+
+    (a, b)
   }
 
   /**
