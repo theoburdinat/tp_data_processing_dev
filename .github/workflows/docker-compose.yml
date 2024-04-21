@@ -14,7 +14,7 @@ jobs:
       run: docker-compose -f data-engineering/tp-functional-programming-scala/docker-compose.yml up -d
 
     - name: Wait for environment to be ready
-      run: sleep 120
+      run: sleep 60
 
     - name: Execute tests
       run: docker-compose -f data-engineering/tp-functional-programming-scala/docker-compose.yml exec my-scala-app sbt test
