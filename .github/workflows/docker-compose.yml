@@ -17,11 +17,11 @@ jobs:
       run: sleep 120
 
     - name: Execute tests
-      run: docker-compose -f src/test/docker/docker-compose.yml exec my-scala-app sbt test
+      run: docker-compose -f data-engineering/tp-functional-programming-scala/docker-compose.yml exec my-scala-app sbt test
 
     - name: Clean up
-      run: docker-compose -f src/test/docker/docker-compose.yml down
+      run: docker-compose -f data-engineering/tp-functional-programming-scala/docker-compose.yml down
 
     - name: Collect logs if needed
       if: failure()  # Only runs if the previous steps fail
-      run: docker-compose -f src/test/docker/docker-compose.yml logs
+      run: docker-compose -f data-engineering/tp-functional-programming-scala/docker-compose.yml logs
