@@ -7,3 +7,4 @@ services:
     volumes:
       - ./:/usr/tp
       - .cache/:/root/.cache # trick to save coursier (sbt) cache
+    command: ["sbt", "shell"]  # Keeps sbt shell running
