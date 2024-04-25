@@ -7,6 +7,8 @@ import org.apache.spark.sql.{DataFrame, Dataset, SparkSession}
 
 object Main {
   def main(args: Array[String]) {
+    System.setProperty("hadoop.home.dir", "C:\\hadoop")
+    System.setProperty("hadoop.tmp.dir", "C:\\hadoop\\tmp")
     val logger = Logger(this.getClass)
     logger.info("Used `sbt run` to start the app")
 
